@@ -1,0 +1,105 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+
+    <h1 class="display-4">Welcome</h1>
+
+    <h5 id="transId"> </h5>
+
+    <div class="container col-md-8 ">
+        <form method="post" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="email">Email address</label>
+                <input type="email" class="form-control" id="email" aria-describedby="emailHelp">
+            </div>
+
+            <div class="form-group">
+                <label for="lastName">Last Name</label>
+                <input type="text" class="form-control" id="lastName">
+            </div>
+
+            <div class="form-group">
+                <label for="firstName">First Name</label>
+                <input type="text" class="form-control" id="firstName">
+            </div>
+
+            <div class="form-group">
+                <label for="exampleInputEmail1">Documents</label>
+                <input type="file" class="form-control" id="files" multiple>
+            </div>
+
+            <div class="progress">
+                <div id="progressbar" class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">0%</div>
+            </div>
+
+            <button type="submit" class="btn btn-primary mt-3">Submit</button>
+        </form>
+    </div>
+</div>
+
+@section Scripts
+{ 
+ <script type="text/javascript" charset="utf-8">
+     $(document).ready(function () {
+
+
+         $('form').on('submit', function (event) {
+             event.preventDefault();
+
+             var input = document.getElementById('files');
+             var files = input.files;
+             var formData = new FormData();
+
+             for (var i = 0; i != files.length; i++) {
+                 formData.append("files", files[i]);
+             }
+
+             var email = document.getElementById('email');
+             var firstName = document.getElementById('lastName');
+             var lastName = document.getElementById('firstName');
+
+             formData.append("Email", email.value );
+             formData.append("FirstName", firstName.value );
+             formData.append("LastName", lastName.value );
+
+             $.ajax({
+                 xhr: function () {
+                     var xhr = new window.XMLHttpRequest();
+
+                     xhr.upload.addEventListener('progress', function (e) {
+
+                         if (e.lengthComputable) {
+                             var percent = Math.round((e.loaded / e.total) * 100);
+                             $('#progressbar').attr('aria-valuenow', percent).css('width', percent + "%").text(percent + "%");
+                         }
+                     });
+                     return xhr;
+                 },
+                 type: 'POST',
+                 url: 'Home/Upload',
+                 data: formData,
+                 processData: false,
+                 contentType: false,
+                 success: function (e) {
+
+                     $('#transId').text("Transaction Id : " + e);
+                     email.value = "";
+                     firstName.value = "";
+                     lastName.value = "";
+                     input.value = "";
+                 },
+                 error: function (e) {
+
+                     email.value = "";
+                     firstName.value = "";
+                     lastName.value = "";
+                     input.value = "";
+                     alert("An erro occured");
+                 }
+             });
+         });
+     })
+ </script>
+}

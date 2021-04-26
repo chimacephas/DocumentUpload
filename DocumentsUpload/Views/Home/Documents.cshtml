@@ -1,0 +1,40 @@
+﻿@model DocumentsUpload.Models.UserDto
+
+@{
+    ViewData["Title"] = "Documents";
+}
+
+<div class="container">
+    <form asp-action="Documents" asp-controller="Home" method="post">
+        <div class="form-group">
+            <label for="exampleInputEmail1">Email address or Transcation Id</label>
+            <input type="text" class="form-control" name="EmailOrTransactionId" id="exampleInputEmail1" aria-describedby="emailHelp">
+        </div>
+        <button type="submit" class="btn btn-primary mb-3">Submit</button>
+    </form>
+</div>
+
+<div class="container">
+    <div class="d-flex align-items-start">
+
+        @if (Model.Documents.Count == 0)
+        {
+            <h5>No Files</h5>
+        }
+        else
+        {
+            @foreach (var item in Model.Documents)
+            {
+              
+                <div class="card mr-1" style="width: 18rem;" >
+                    <div class="card-body">
+                        <h5 class="card-title"> @item.Name</h5>
+                        <a href="@item.Url" target="_blank" class="btn btn-primary">View</a>
+                    </div>
+                </div>
+            }
+        }
+
+
+    </div>
+</div>
